@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Movie Recommendations</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f2f2f2;
+      background-image: linear-gradient(45deg, #93a5cf, #e4efe9);
+      animation: background-animation 10s infinite linear;
+    }
+
+    @keyframes background-animation {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #333333;
+    }
+
+    .container {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-size: 18px;
+      margin-right: 10px;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      width: 300px;
+      max-width: 100%;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #recommendations {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .movie-card {
+      border: 1px solid #ddd;
+      padding: 20px;
+      margin-bottom: 20px;
+      background-color: #ffffff;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .movie-card h3 {
+      margin: 10px 0;
+      color: #333333;
+    }
+
+    .movie-card p {
+      margin: 0;
+      color: #666666;
+    }
+  </style>
+</head>
+<body>
+  <h1>Movie Recommendations</h1>
+  <div class="container">
+    <label for="movie-name">Enter a movie name:</label>
+    <input type="text" id="movie-name" placeholder="Movie name">
+  </div>
+  <div id="recommendations"></div>
+
+  <script>
+    var timeoutId;
+
+    document.getElementById('movie-name').addEventListener('input', function() {
+      clearTimeout(timeoutId);
+      var movieName = this.value;
+      timeoutId = setTimeout(function() {
+        getRecommendations(movieName);
+      }, 500);
+    });
+
+    function getRecommendations(movieName) {
+      // Make a request to the Flask API for recommendations
+      fetch('/recommendations?movie_name=' + encodeURIComponent(movieName))
+        .then(function(response) {
+          return response.json();
+        })
+        .then(function(data) {
+          // Build the recommendations HTML
+          var recommendationsHTML = '';
+          data.forEach(function(movie) {
+            recommendationsHTML += '<div class="movie-card">';
+            recommendationsHTML += '<h3>' + movie.title + '</h3>';
+            recommendationsHTML += '</div>';
+          });
+
+          // Display the recommendations
+          document.getElementById('recommendations').innerHTML = recommendationsHTML;
+        })
+        .catch(function(error) {
+          console.error('Error:', error);
+        });
+    }
+  </script>
+</body>
+</html>
